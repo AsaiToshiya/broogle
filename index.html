@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Broogle</title>
+    <style>
+      body {
+        text-align: center;
+      }
+
+      table {
+        margin: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Broogle</h1>
+
+    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
+    <script>
+      const relays = [
+        "wss://nos.lol",
+        "wss://nostr.bitcoiner.social",
+        "wss://nostr.mom",
+        "wss://relay-jp.nostr.wirednet.jp",
+        "wss://relay.damus.io",
+        "wss://relay.nostr.bg",
+        "wss://relay.nostr.band",
+        "wss://r.hostr.cc",
+      ];
+
+      const getKey = (event) =>
+        event.kind == 5392
+          ? event.id
+          : `35392:${event.pubkey}:${
+              event.tags.find((tag) => tag[0] == "d")[1]
+            }`;
+
+      (async () => {
+        const pool = new window.NostrTools.SimplePool();
+        const events = await pool.list(relays, [
+          {
+            kinds: [5392, 35392],
+            limit: 10,
+          },
+        ]);
+        await pool.close(relays);
+
+        const uniqueEvents = Object.values(
+          events
+            .sort((a, b) => a.created_at - b.created_at)
+            .reduce(
+              (acc, obj) => ({
+                ...acc,
+                [getKey(obj)]: obj,
+              }),
+              {}
+            )
+        ).sort((a, b) => b.created_at - a.created_at);
+
+        uniqueEvents.slice(0, 10).forEach((event) => {
+          const nip19 =
+            event.kind == 5392
+              ? window.NostrTools.nip19.neventEncode(event)
+              : window.NostrTools.nip19.naddrEncode(event);
+          const title = event.content.match(/<title[^>]*>([^<]+)<\/title>/)[1];
+
+          const h2 = document.createElement("h2");
+          const a = document.createElement("a");
+          a.setAttribute("href", `nostr:${nip19}`);
+          a.appendChild(document.createTextNode(title));
+          h2.appendChild(a);
+          document.body.appendChild(h2);
+        });
+      })();
+    </script>
+  </body>
+</html>
