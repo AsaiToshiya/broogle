@@ -35,6 +35,19 @@
               event.tags.find((tag) => tag[0] == "d")[1]
             }`;
 
+      const getProps = (event) => {
+        const nip19 =
+          event.kind == 5392
+            ? window.NostrTools.nip19.neventEncode(event)
+            : window.NostrTools.nip19.naddrEncode({
+                pubkey: event.pubkey,
+                kind: 35392,
+                identifier: event.tags.find((tag) => tag[0] == "d")[1],
+              });
+        const title = event.content.match(/<title[^>]*>([^<]+)<\/title>/)?.[1];
+        return { nip19, title };
+      };
+
       (async () => {
         const pool = new window.NostrTools.SimplePool();
         const events = await pool.list(relays, [
@@ -58,17 +71,7 @@
         ).sort((a, b) => b.created_at - a.created_at);
 
         uniqueEvents.slice(0, 10).forEach((event) => {
-          const nip19 =
-            event.kind == 5392
-              ? window.NostrTools.nip19.neventEncode(event)
-              : window.NostrTools.nip19.naddrEncode({
-                  pubkey: event.pubkey,
-                  kind: 35392,
-                  identifier: event.tags.find((tag) => tag[0] == "d")[1],
-                });
-          const title = event.content.match(
-            /<title[^>]*>([^<]+)<\/title>/
-          )?.[1];
+          const { nip19, title } = getProps(event);
 
           const h2 = document.createElement("h2");
           const a = document.createElement("a");
