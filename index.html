@@ -28,6 +28,15 @@
         "wss://r.hostr.cc",
       ];
 
+      const createComponent = ({ nip19, title }) => {
+        const h2 = document.createElement("h2");
+        const a = document.createElement("a");
+        a.setAttribute("href", `nostr:${nip19}`);
+        a.appendChild(document.createTextNode(title));
+        h2.appendChild(a);
+        return h2;
+      };
+
       const getKey = (event) =>
         event.kind == 5392
           ? event.id
@@ -73,11 +82,7 @@
         uniqueEvents.slice(0, 10).forEach((event) => {
           const { nip19, title } = getProps(event);
 
-          const h2 = document.createElement("h2");
-          const a = document.createElement("a");
-          a.setAttribute("href", `nostr:${nip19}`);
-          a.appendChild(document.createTextNode(title));
-          h2.appendChild(a);
+          const h2 = createComponent({ nip19, title });
           document.body.appendChild(h2);
         });
       })();
