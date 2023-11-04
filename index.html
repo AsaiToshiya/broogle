@@ -77,14 +77,17 @@
               }),
               {}
             )
-        ).sort((a, b) => b.created_at - a.created_at);
+        );
 
-        uniqueEvents.slice(0, 10).forEach((event) => {
-          const { nip19, title } = getProps(event);
+        uniqueEvents
+          .sort((a, b) => b.created_at - a.created_at)
+          .slice(0, 10)
+          .forEach((event) => {
+            const { nip19, title } = getProps(event);
 
-          const h2 = createComponent({ nip19, title });
-          document.body.appendChild(h2);
-        });
+            const h2 = createComponent({ nip19, title });
+            document.body.appendChild(h2);
+          });
       })();
     </script>
   </body>
