@@ -83,9 +83,9 @@
           .sort((a, b) => b.created_at - a.created_at)
           .slice(0, 10)
           .forEach((event) => {
-            const { nip19, title } = getProps(event);
+            const props = getProps(event);
 
-            const h2 = createComponent({ nip19, title });
+            const h2 = createComponent(props);
             document.body.appendChild(h2);
           });
       })();
