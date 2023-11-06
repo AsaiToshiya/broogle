@@ -10,6 +10,7 @@
   </head>
   <body>
     <h1>Broogle</h1>
+    <button id="moreResults">More results</button>
 
     <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <script>
@@ -53,11 +54,12 @@
         return { nip19, title };
       };
 
-      (async () => {
+      const moreResults = async (until) => {
         const pool = new window.NostrTools.SimplePool();
         const events = await pool.list(relays, [
           {
             kinds: [5392, 35392],
+            until,
             limit: 10,
           },
         ]);
@@ -75,16 +77,25 @@
             )
         );
 
-        uniqueEvents
+        const results = uniqueEvents
           .sort((a, b) => b.created_at - a.created_at)
-          .slice(0, 10)
-          .forEach((event) => {
-            const props = getProps(event);
+          .slice(0, 10);
+        results.forEach((event) => {
+          const props = getProps(event);
 
-            const h2 = createComponent(props);
-            document.body.appendChild(h2);
-          });
+          const h2 = createComponent(props);
+          document.body.insertBefore(h2, moreResultsButton);
+        });
+
+        moreResultsButton.onclick = async () =>
+          await moreResults(results[results.length - 1].created_at - 1);
+      };
+
+      (async () => {
+        await moreResults(Math.floor(Date.now() / 1000));
       })();
+
+      const moreResultsButton = document.getElementById("moreResults");
     </script>
   </body>
 </html>
