@@ -10,6 +10,29 @@
   </head>
   <body>
     <h1>Broogle</h1>
+    <input
+      type="radio"
+      id="htmlContent"
+      name="type"
+      onchange="handleHtmlContentChange();"
+      checked
+    />
+    <label for="htmlContent">HTML Content</label>
+    <input
+      type="radio"
+      id="longFormContent"
+      name="type"
+      onchange="handleLongFormContentChange();"
+    />
+    <label for="longFormContent">Long-form Content</label>
+    <input
+      type="radio"
+      id="image"
+      name="type"
+      onchange="handleImageChange();"
+    />
+    <label for="image">Image</label>
+    <div id="results"></div>
     <button id="moreResults">More results</button>
 
     <script src="https://unpkg.com/nostr-tools@1.17.0/lib/nostr.bundle.js"></script>
@@ -34,32 +57,37 @@
       };
 
       const getKey = (event) =>
-        event.kind == 5392
+        event.kind == 5392 || event.kind == 1063 || event.kind == 1064
           ? event.id
-          : `35392:${event.pubkey}:${
-              event.tags.find((tag) => tag[0] == "d")[1]
+          : `${event.kind}:${event.pubkey}:${
+              event.tags.find((tag) => tag[0] == "d")?.[1]
             }`;
 
       const getProps = (event) => {
         const nip19 =
-          event.kind == 5392
+          event.kind == 5392 || event.kind == 1063 || event.kind == 1064
             ? window.NostrTools.nip19.neventEncode(event)
             : window.NostrTools.nip19.naddrEncode({
                 pubkey: event.pubkey,
-                kind: 35392,
-                identifier: event.tags.find((tag) => tag[0] == "d")[1],
+                kind: event.kind,
+                identifier: event.tags.find((tag) => tag[0] == "d")?.[1],
               });
-        const title = event.content.match(/<title[^>]*>([^<]+)<\/title>/)?.[1];
+        const title =
+          event.kind == 5392 || event.kind == 35392
+            ? event.content.match(/<title[^>]*>([^<]+)<\/title>/)?.[1]
+            : event.kind == 30023
+            ? event.tags.find((tag) => tag[0] == "title")[1]
+            : event.id;
         return { nip19, title };
       };
 
-      const moreResults = async (until) => {
+      const moreResults = async (filter, until) => {
         const pool = new window.NostrTools.SimplePool();
         const events = await pool.list(relays, [
           {
-            kinds: [5392, 35392],
             until,
             limit: 10,
+            ...filter,
           },
         ]);
         await pool.close(relays);
@@ -83,16 +111,55 @@
           const props = getProps(event);
 
           const h2 = createComponent(props);
-          document.body.insertBefore(h2, moreResultsButton);
+          document.getElementById("results").appendChild(h2);
         });
 
         moreResultsButton.onclick = async () =>
-          await moreResults(results[results.length - 1].created_at - 1);
+          await moreResults(filter, results[results.length - 1].created_at - 1);
       };
 
-      (async () => {
-        await moreResults(Math.floor(Date.now() / 1000));
-      })();
+      const handleHtmlContentChange = () => {
+        results.innerHTML = "";
+        moreResults(
+          {
+            kinds: [5392, 35392],
+          },
+          Math.floor(Date.now() / 1000)
+        );
+      };
+
+      const handleImageChange = () => {
+        results.innerHTML = "";
+        moreResults(
+          {
+            kinds: [1063, 1064],
+            "#m": [
+              "image/apng",
+              "image/avif",
+              "image/bmp",
+              "image/gif",
+              "image/jpeg",
+              "image/png",
+              "image/svg+xml",
+              "image/tiff",
+              "image/webp",
+            ],
+          },
+          Math.floor(Date.now() / 1000)
+        );
+      };
+
+      const handleLongFormContentChange = () => {
+        results.innerHTML = "";
+        moreResults(
+          {
+            kinds: [30023],
+          },
+          Math.floor(Date.now() / 1000)
+        );
+      };
+
+      handleHtmlContentChange();
 
       const moreResultsButton = document.getElementById("moreResults");
     </script>
