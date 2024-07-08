@@ -12,10 +12,17 @@
     <h1>Broogle</h1>
     <input
       type="radio"
+      id="all"
+      name="type"
+      onchange="handleAllChange();"
+      checked
+    />
+    <label for="all">All</label>
+    <input
+      type="radio"
       id="htmlContent"
       name="type"
       onchange="handleHtmlContentChange();"
-      checked
     />
     <label for="htmlContent">HTML Content</label>
     <input
@@ -81,15 +88,16 @@
         return { nip19, title };
       };
 
-      const moreResults = async (filter, until) => {
+      const moreResults = async (filters, until) => {
         const pool = new window.NostrTools.SimplePool();
-        const events = await pool.list(relays, [
-          {
+        const events = await pool.list(
+          relays,
+          filters.map((filter) => ({
             until,
             limit: 10,
             ...filter,
-          },
-        ]);
+          }))
+        );
         await pool.close(relays);
 
         const uniqueEvents = Object.values(
@@ -118,12 +126,43 @@
           await moreResults(filter, results[results.length - 1].created_at - 1);
       };
 
+      const handleAllChange = () => {
+        results.innerHTML = "";
+        moreResults(
+          [
+            {
+              kinds: [5392, 35392],
+            },
+            {
+              kinds: [1063, 1064],
+              "#m": [
+                "image/apng",
+                "image/avif",
+                "image/bmp",
+                "image/gif",
+                "image/jpeg",
+                "image/png",
+                "image/svg+xml",
+                "image/tiff",
+                "image/webp",
+              ],
+            },
+            {
+              kinds: [30023],
+            },
+          ],
+          Math.floor(Date.now() / 1000)
+        );
+      };
+
       const handleHtmlContentChange = () => {
         results.innerHTML = "";
         moreResults(
-          {
-            kinds: [5392, 35392],
-          },
+          [
+            {
+              kinds: [5392, 35392],
+            },
+          ],
           Math.floor(Date.now() / 1000)
         );
       };
@@ -131,20 +170,22 @@
       const handleImageChange = () => {
         results.innerHTML = "";
         moreResults(
-          {
-            kinds: [1063, 1064],
-            "#m": [
-              "image/apng",
-              "image/avif",
-              "image/bmp",
-              "image/gif",
-              "image/jpeg",
-              "image/png",
-              "image/svg+xml",
-              "image/tiff",
-              "image/webp",
-            ],
-          },
+          [
+            {
+              kinds: [1063, 1064],
+              "#m": [
+                "image/apng",
+                "image/avif",
+                "image/bmp",
+                "image/gif",
+                "image/jpeg",
+                "image/png",
+                "image/svg+xml",
+                "image/tiff",
+                "image/webp",
+              ],
+            },
+          ],
           Math.floor(Date.now() / 1000)
         );
       };
@@ -152,14 +193,16 @@
       const handleLongFormContentChange = () => {
         results.innerHTML = "";
         moreResults(
-          {
-            kinds: [30023],
-          },
+          [
+            {
+              kinds: [30023],
+            },
+          ],
           Math.floor(Date.now() / 1000)
         );
       };
 
-      handleHtmlContentChange();
+      handleAllChange();
 
       const moreResultsButton = document.getElementById("moreResults");
     </script>
