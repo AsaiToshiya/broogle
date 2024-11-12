@@ -10,35 +10,38 @@
   </head>
   <body>
     <h1>Broogle</h1>
-    <input
-      type="radio"
-      id="all"
-      name="type"
-      onchange="handleAllChange();"
-      checked
-    />
-    <label for="all">All</label>
-    <input
-      type="radio"
-      id="htmlContent"
-      name="type"
-      onchange="handleHtmlContentChange();"
-    />
-    <label for="htmlContent">HTML Content</label>
-    <input
-      type="radio"
-      id="longFormContent"
-      name="type"
-      onchange="handleLongFormContentChange();"
-    />
-    <label for="longFormContent">Long-form Content</label>
-    <input
-      type="radio"
-      id="image"
-      name="type"
-      onchange="handleImageChange();"
-    />
-    <label for="image">Image</label>
+    <div>
+      <input
+        type="radio"
+        id="all"
+        name="type"
+        onchange="handleAllChange();"
+        checked
+      />
+      <label for="all">All</label>
+      <input
+        type="radio"
+        id="htmlContent"
+        name="type"
+        onchange="handleHtmlContentChange();"
+      />
+      <label for="htmlContent">HTML Content</label>
+      <input
+        type="radio"
+        id="longFormContent"
+        name="type"
+        onchange="handleLongFormContentChange();"
+      />
+      <label for="longFormContent">Long-form Content</label>
+      <input
+        type="radio"
+        id="image"
+        name="type"
+        onchange="handleImageChange();"
+      />
+      <label for="image">Image</label>
+    </div>
+    <button onclick="handleClick();">Search</button>
     <div id="results"></div>
     <button id="moreResults">More results</button>
     <p>
@@ -132,81 +135,68 @@
           );
       };
 
-      const handleAllChange = () => {
+      const handleAllChange = () =>
+        (filters = [
+          {
+            kinds: [5392, 35392],
+          },
+          {
+            kinds: [1063, 1064],
+            "#m": [
+              "image/apng",
+              "image/avif",
+              "image/bmp",
+              "image/gif",
+              "image/jpeg",
+              "image/png",
+              "image/svg+xml",
+              "image/tiff",
+              "image/webp",
+            ],
+          },
+          {
+            kinds: [30023],
+          },
+        ]);
+
+      const handleClick = () => {
         results.innerHTML = "";
-        moreResults(
-          [
-            {
-              kinds: [5392, 35392],
-            },
-            {
-              kinds: [1063, 1064],
-              "#m": [
-                "image/apng",
-                "image/avif",
-                "image/bmp",
-                "image/gif",
-                "image/jpeg",
-                "image/png",
-                "image/svg+xml",
-                "image/tiff",
-                "image/webp",
-              ],
-            },
-            {
-              kinds: [30023],
-            },
-          ],
-          Math.floor(Date.now() / 1000)
-        );
+        moreResults(filters, Math.floor(Date.now() / 1000));
       };
 
-      const handleHtmlContentChange = () => {
-        results.innerHTML = "";
-        moreResults(
-          [
-            {
-              kinds: [5392, 35392],
-            },
-          ],
-          Math.floor(Date.now() / 1000)
-        );
-      };
+      const handleHtmlContentChange = () =>
+        (filters = [
+          {
+            kinds: [5392, 35392],
+          },
+        ]);
 
-      const handleImageChange = () => {
-        results.innerHTML = "";
-        moreResults(
-          [
-            {
-              kinds: [1063, 1064],
-              "#m": [
-                "image/apng",
-                "image/avif",
-                "image/bmp",
-                "image/gif",
-                "image/jpeg",
-                "image/png",
-                "image/svg+xml",
-                "image/tiff",
-                "image/webp",
-              ],
-            },
-          ],
-          Math.floor(Date.now() / 1000)
-        );
-      };
+      const handleImageChange = () =>
+        (filters = [
+          {
+            kinds: [1063, 1064],
+            "#m": [
+              "image/apng",
+              "image/avif",
+              "image/bmp",
+              "image/gif",
+              "image/jpeg",
+              "image/png",
+              "image/svg+xml",
+              "image/tiff",
+              "image/webp",
+            ],
+          },
+        ]);
 
-      const handleLongFormContentChange = () => {
-        results.innerHTML = "";
-        moreResults(
-          [
-            {
-              kinds: [30023],
-            },
-          ],
-          Math.floor(Date.now() / 1000)
-        );
-      };
+      const handleLongFormContentChange = () =>
+        (filters = [
+          {
+            kinds: [30023],
+          },
+        ]);
+
+      let filters;
 
       handleAllChange();
 
