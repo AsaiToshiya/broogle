@@ -1,0 +1,24 @@
+{
+  "name": "broogle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "minify": "html-minifier --input-dir . --output-dir . --file-ext html --collapse-whitespace --minify-js true --minify-css true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AsaiToshiya/broogle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AsaiToshiya/broogle/issues"
+  },
+  "homepage": "https://github.com/AsaiToshiya/broogle#readme",
+  "devDependencies": {
+    "html-minifier": "^4.0.0"
+  }
+}
