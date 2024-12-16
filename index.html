@@ -48,7 +48,7 @@
       <a href="https://github.com/AsaiToshiya/broogle">GitHub</a>
     </p>
 
-    <script src="https://unpkg.com/nostr-tools@1.17.0/lib/nostr.bundle.js"></script>
+    <script src="https://unpkg.com/nostr-tools@2.10.4/lib/nostr.bundle.js"></script>
     <script>
       const relays = [
         "wss://nos.lol",
@@ -96,14 +96,17 @@
 
       const moreResults = async (filters, until) => {
         const pool = new window.NostrTools.SimplePool();
-        const events = await pool.list(
-          relays,
-          filters.map((filter) => ({
-            until,
-            limit: 10,
-            ...filter,
-          }))
-        );
+        const events = [
+          ...(await Promise.all(
+            filters.map((filter) =>
+              pool.querySync(relays, {
+                until,
+                limit: 10,
+                ...filter,
+              })
+            )
+          )),
+        ].flat();
         await pool.close(relays);
 
         const uniqueEvents = Object.values(
