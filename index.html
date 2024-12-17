@@ -50,6 +50,29 @@
 
     <script src="https://unpkg.com/nostr-tools@2.10.4/lib/nostr.bundle.js"></script>
     <script>
+      const htmlContentFilter = {
+        kinds: [5392, 35392],
+      };
+
+      const imageFilter = {
+        kinds: [1063, 1064],
+        "#m": [
+          "image/apng",
+          "image/avif",
+          "image/bmp",
+          "image/gif",
+          "image/jpeg",
+          "image/png",
+          "image/svg+xml",
+          "image/tiff",
+          "image/webp",
+        ],
+      };
+
+      const longContentFilter = {
+        kinds: [30023],
+      };
+
       const relays = [
         "wss://nos.lol",
         "wss://nostr.bitcoiner.social",
@@ -139,65 +162,18 @@
       };
 
       const handleAllChange = () =>
-        (filters = [
-          {
-            kinds: [5392, 35392],
-          },
-          {
-            kinds: [1063, 1064],
-            "#m": [
-              "image/apng",
-              "image/avif",
-              "image/bmp",
-              "image/gif",
-              "image/jpeg",
-              "image/png",
-              "image/svg+xml",
-              "image/tiff",
-              "image/webp",
-            ],
-          },
-          {
-            kinds: [30023],
-          },
-        ]);
+        (filters = [htmlContentFilter, imageFilter, longContentFilter]);
 
       const handleClick = () => {
         results.innerHTML = "";
         moreResults(filters, Math.floor(Date.now() / 1000));
       };
 
-      const handleHtmlContentChange = () =>
-        (filters = [
-          {
-            kinds: [5392, 35392],
-          },
-        ]);
+      const handleHtmlContentChange = () => (filters = [htmlContentFilter]);
 
-      const handleImageChange = () =>
-        (filters = [
-          {
-            kinds: [1063, 1064],
-            "#m": [
-              "image/apng",
-              "image/avif",
-              "image/bmp",
-              "image/gif",
-              "image/jpeg",
-              "image/png",
-              "image/svg+xml",
-              "image/tiff",
-              "image/webp",
-            ],
-          },
-        ]);
+      const handleImageChange = () => (filters = [imageFilter]);
 
-      const handleLongFormContentChange = () =>
-        (filters = [
-          {
-            kinds: [30023],
-          },
-        ]);
+      const handleLongFormContentChange = () => (filters = [longContentFilter]);
 
       let filters;
 
