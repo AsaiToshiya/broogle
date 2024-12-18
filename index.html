@@ -116,7 +116,7 @@
           event.kind == 5392 || event.kind == 35392
             ? event.content.match(/<title[^>]*>([^<]+)<\/title>/)?.[1]
             : event.kind == 30023
-            ? event.tags.find((tag) => tag[0] == "title")[1]
+            ? event.tags.find((tag) => tag[0] == "title")?.[1]
             : event.id;
         return { nip19, title };
       };
