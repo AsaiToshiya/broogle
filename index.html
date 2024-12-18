@@ -10,6 +10,10 @@
   </head>
   <body>
     <h1>Broogle</h1>
+    <p>
+      author:
+      <input id="author" type="text" size="70" placeholder="hex" />
+    </p>
     <div>
       <input
         type="radio"
@@ -126,6 +130,7 @@
                 until,
                 limit: 10,
                 ...filter,
+                authors: author.value ? [author.value] : undefined,
               })
             )
           )),
