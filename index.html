@@ -47,7 +47,7 @@
     </div>
     <button onclick="handleClick();">Search</button>
     <div id="results"></div>
-    <button id="moreResults">More results</button>
+    <button id="moreResults" style="display: none">More results</button>
     <p>
       <a href="https://github.com/AsaiToshiya/broogle">GitHub</a>
     </p>
@@ -164,6 +164,7 @@
             filters,
             results[results.length - 1].created_at - 1
           );
+        moreResultsButton.style.display = "inline-block";
       };
 
       const handleAllChange = () =>
@@ -171,6 +172,7 @@
 
       const handleClick = () => {
         results.innerHTML = "";
+        moreResultsButton.style.display = "none";
         moreResults(filters, Math.floor(Date.now() / 1000));
       };
 
