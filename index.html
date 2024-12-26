@@ -186,11 +186,6 @@
       handleAllChange();
 
       const moreResultsButton = document.getElementById("moreResults");
-      location.hash &&
-        (author.value = new URLSearchParams(location.hash.substring(1)).get(
-          "author"
-        )) &&
-        handleClick();
     </script>
   </body>
 </html>
