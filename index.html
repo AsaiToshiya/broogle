@@ -39,6 +39,13 @@
       <label for="longFormContent">Long-form Content</label>
       <input
         type="radio"
+        id="wiki"
+        name="type"
+        onchange="handleWikiChange();"
+      />
+      <label for="wiki">Wiki</label>
+      <input
+        type="radio"
         id="image"
         name="type"
         onchange="handleImageChange();"
@@ -86,6 +93,10 @@
         "wss://relay.nostr.band",
         "wss://r.hostr.cc",
       ];
+
+      const wikiFilter = {
+        kinds: [30818],
+      };
 
       const createComponent = ({ nip19, title }) => {
         const h2 = document.createElement("h2");
@@ -167,7 +178,12 @@
       };
 
       const handleAllChange = () =>
-        (filters = [htmlContentFilter, imageFilter, longContentFilter]);
+        (filters = [
+          htmlContentFilter,
+          imageFilter,
+          longContentFilter,
+          wikiFilter,
+        ]);
 
       const handleClick = () => {
         results.innerHTML = "";
@@ -180,6 +196,8 @@
       const handleImageChange = () => (filters = [imageFilter]);
 
       const handleLongFormContentChange = () => (filters = [longContentFilter]);
+
+      const handleWikiContentChange = () => (filters = [wikiFilter]);
 
       let filters;
 
